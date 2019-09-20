@@ -2,6 +2,7 @@ const express = require('express');
 //const bcrypt = require('bcrypt');  //no funcionó la instalación
 const _ = require('underscore');
 const Usuario = require('../models/usuario');
+const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion');
 
 const app = express();
 
@@ -9,7 +10,7 @@ const app = express();
 
 
 //GET
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, (req, res) => { //verificaToken es un middleware que verifica si es correcta la solicitud y si es así procede
 
     let desde = req.query.desde || 0; //le pregunto al usuario desde qué página desea ver si no especifica será desde el 0
     desde = Number(desde);
@@ -83,7 +84,7 @@ app.get('/usuario', function(req, res) {
 }); */
 
 //POST
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let body = req.body;
 
@@ -115,7 +116,7 @@ app.post('/usuario', function(req, res) {
 
 
 //PUT
-app.put('/usuario/:id', function(req, res) { //el put se utiliza para actualizar registros
+app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) { //el put se utiliza para actualizar registros
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']); //_.pick() es una función del paquete underscore que permite seleccionar que elementos del objeto deseo que el usuario pueda editar
     //let body = req.body;
@@ -144,7 +145,7 @@ app.put('/usuario/:id', function(req, res) { //el put se utiliza para actualizar
 
 
 //DELETE
-app.delete('/usuario/:id', function(req, res) { //el delete se utiliza para eliminar registros
+app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) { //el delete se utiliza para eliminar registros
     let id = req.params.id;
 
     let cambiaEstado = {
