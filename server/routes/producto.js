@@ -91,7 +91,7 @@ app.get('/productos/:id', verificaToken, (req, res) => {
 app.get('/productos/buscar/:termino', verificaToken, (req, res) => {
     let termino = req.params.termino;
 
-    let regex = new RegExp(termino, 'i') //es el equivalente al like. Busca caracteres que concuerdan con la cadena. No tiene que ser exactamente igual. La letra 'i' indica que no importa que sean mayúsculas o minúsculas
+    let regex = new RegExp(termino, 'i'); //es el equivalente al like. Busca caracteres que concuerdan con la cadena. No tiene que ser exactamente igual. La letra 'i' indica que no importa que sean mayúsculas o minúsculas
 
     Producto.find({ nombre: regex })
         .populate('categoria', 'nombre')
